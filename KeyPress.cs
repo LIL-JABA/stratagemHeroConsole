@@ -18,31 +18,30 @@ namespace StratagemHero
 
     internal class KeyPressNotifier
     {
-        // Define a delegate to specify the signature of the event handler method
         public delegate void KeyPressEventHandler(object sender, KeyPressEventArgs e);
 
-        // Define the event using the delegate
         public event KeyPressEventHandler KeyPressed;
+        private bool isWorking = false;
 
-        // Method to start listening for key presses
         public async Task StartListening()
         {
+            isWorking = true;
             while (true)
             {
-                // Await for a key press asynchronously
+                if (!isWorking) break;
                 await Task.Run(() =>
                 {
                     var keyInfo = Console.ReadKey(true);
-                    // Raise the event when a key is pressed
                     OnKeyPressed(new KeyPressEventArgs(keyInfo));
                 });
             }
         }
 
-        // Method to raise the KeyPressed event
+        public async Task StopListening() => isWorking = false;
+
         protected void OnKeyPressed(KeyPressEventArgs e)
         {
-            KeyPressed?.Invoke(this, e);
+            KeyPressed.Invoke(this, e);
         }
     }
 }
